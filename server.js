@@ -79,12 +79,12 @@ app.post("/chat", async (req, res) => {
     res.json({
       resposta: data.choices[0].message.content
     });
-
-  } catch (err) {
-    res.json({ erro: "Erro na IA" });
+    {
+    catch (err) {
+  res.json({ erro: err.message });
   }
-});
+} ) ;
 
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
-});
+app.listen ( 3000 , ( ) = > {​
+  console . log ( "Servidor rodando na porta 3000" ) ;
+} ) ;
