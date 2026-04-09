@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 COLOQUE SUA CHAVE DA OPENAI AQUI
-const API_KEY = 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
+const API_KEY = "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";
 
 // 🧠 "Banco de dados" simples
 let usuarios = [];
