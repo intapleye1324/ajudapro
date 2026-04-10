@@ -77,9 +77,7 @@ app.post("/chat", async (req, res) => {
       return res.json({ erro: data.error.message });
     }
 
-    res.json({
-      resposta: data.choices[0].message.content
-    });
+    res.json(data);
 
   } catch (err) {
     res.json({ erro: err.message });
