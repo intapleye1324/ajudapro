@@ -79,10 +79,12 @@ app.post("/chat", async (req, res) => {
     res.json({
       resposta: data.choices[0].message.content
     });
-    {
-    catch (err) {
+    
+    try {
+  // código da IA aqui
+} catch (err) {
   res.json({ erro: err.message });
-  }
+    }
 } ) ;
 
 app.listen ( 3000 , ( ) = > {​
