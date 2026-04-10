@@ -6,41 +6,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔑 COLOQUE SUA CHAVE DA OPENAI AQUI
+// 🔑 SUA CHAVE AQUI (com aspas!)
 const API_KEY = "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";
 
-// 🧠 "Banco de dados" simples
+// banco simples
 let usuarios = [];
 
-// 📌 CADASTRO
+// cadastro
 app.post("/register", (req, res) => {
   const { email, senha } = req.body;
 
-  const novoUsuario = {
+  usuarios.push({
     email,
     senha,
     criadoEm: Date.now(),
     plano: "gratis"
-  };
+  });
 
-  usuarios.push(novoUsuario);
   res.json({ msg: "Conta criada com sucesso!" });
 });
 
-// 🔐 LOGIN
+// login
 app.post("/login", (req, res) => {
   const { email, senha } = req.body;
 
   const user = usuarios.find(u => u.email === email && u.senha === senha);
 
-  if (!user) {
-    return res.json({ erro: "Usuário não encontrado" });
-  }
+  if (!user) return res.json({ erro: "Usuário não encontrado" });
 
   res.json(user);
 });
 
-// ⏳ VERIFICAR ACESSO (2 dias grátis)
+// verificar acesso
 app.post("/check", (req, res) => {
   const { email } = req.body;
 
@@ -57,7 +54,7 @@ app.post("/check", (req, res) => {
   res.json({ bloqueado: false });
 });
 
-// 🤖 CHAT IA
+// CHAT IA
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
@@ -69,24 +66,29 @@ app.post("/chat", async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: mensagem }]
       })
     });
 
     const data = await resposta.json();
 
+    if (data.error) {
+      return res.json({ erro: data.error.message });
+    }
+
     res.json({
       resposta: data.choices[0].message.content
     });
-    
-    try {
-  // código da IA aqui
-} catch (err) {
-  res.json({ erro: err.message });
-    }
-} ) ;
 
-app.listen ( 3000 , ( ) = > {​
-  console . log ( "Servidor rodando na porta 3000" ) ;
-} ) ;
+  } catch (err) {
+    res.json({ erro: err.message });
+  }
+});
+
+// porta correta pro Render
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Servidor rodando");
+});
