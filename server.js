@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 SUA CHAVE AQUI (com aspas!)
-const API_KEY = "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";
+const API_KEY = "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";
 
 // banco simples
 let usuarios = [];
