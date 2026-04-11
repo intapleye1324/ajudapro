@@ -6,8 +6,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔑 COLOQUE SUA CHAVE AQUI
-const API_KEY = "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
+// 🔑 COLOCA SUA CHAVE AQUI (COM ASPAS)
+const API_KEY = "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";
+
+// teste inicial (pra evitar erro status 1)
+app.get("/", (req, res) => {
+  res.send("AjudaPro online 🔥");
+});
 
 // banco simples
 let usuarios = [];
@@ -37,23 +42,6 @@ app.post("/login", (req, res) => {
   res.json(user);
 });
 
-// verificar acesso
-app.post("/check", (req, res) => {
-  const { email } = req.body;
-
-  const user = usuarios.find(u => u.email === email);
-
-  if (!user) return res.json({ erro: "Usuário não existe" });
-
-  let dias = (Date.now() - user.criadoEm) / (1000 * 60 * 60 * 24);
-
-  if (user.plano === "gratis" && dias > 2) {
-    return res.json({ bloqueado: true });
-  }
-
-  res.json({ bloqueado: false });
-});
-
 // chat IA
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
@@ -67,10 +55,7 @@ app.post("/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "Você é a IA AjudaPro, especialista em jogos, dinheiro online e dicas práticas." },
-          { role: "user", content: mensagem }
-        ]
+        messages: [{ role: "user", content: mensagem }]
       })
     });
 
@@ -89,6 +74,7 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+// porta render
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
