@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 COLOCA SUA CHAVE AQUI (COM ASPAS)
-const API_KEY = "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";
+const API_KEY = "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";
 
 // teste inicial (pra evitar erro status 1)
 app.get("/", (req, res) => {
