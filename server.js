@@ -6,8 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔑 SUA CHAVE AQUI (com aspas!)
-const API_KEY = "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";
+// 🔑 COLOQUE SUA CHAVE AQUI
+const API_KEY = "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
 
 // banco simples
 let usuarios = [];
@@ -54,7 +54,7 @@ app.post("/check", (req, res) => {
   res.json({ bloqueado: false });
 });
 
-// CHAT IA
+// chat IA
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
@@ -67,7 +67,10 @@ app.post("/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: mensagem }]
+        messages: [
+          { role: "system", content: "Você é a IA AjudaPro, especialista em jogos, dinheiro online e dicas práticas." },
+          { role: "user", content: mensagem }
+        ]
       })
     });
 
@@ -77,14 +80,15 @@ app.post("/chat", async (req, res) => {
       return res.json({ erro: data.error.message });
     }
 
-    res.json(data);
+    res.json({
+      resposta: data.choices[0].message.content
+    });
 
   } catch (err) {
     res.json({ erro: err.message });
   }
 });
 
-// porta correta pro Render
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
