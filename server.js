@@ -7,7 +7,9 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 COLOCA SUA CHAVE AQUI (COM ASPAS)
-const API_KEY = "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";
+const API_KEY =
+process.env.OPENAI_API_KEY;
+  
 
 // teste inicial (pra evitar erro status 1)
 app.get("/", (req, res) => {
