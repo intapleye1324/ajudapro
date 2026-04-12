@@ -5,47 +5,76 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// memória simples (por usuário)
+let memoria = {};
+
 // teste
 app.get("/", (req, res) => {
   res.send("AjudaPro online 🔥");
 });
 
-// IA simulada
+// função aleatória
+function escolher(lista) {
+  return lista[Math.floor(Math.random() * lista.length)];
+}
+
 app.post("/chat", async (req, res) => {
-  const { mensagem } = req.body;
+  const { mensagem, usuario } = req.body;
 
   if (!mensagem) {
-    return res.json({ resposta: "Digite alguma pergunta." });
+    return res.json({ resposta: "Fala comigo! O que você quer saber?" });
   }
+
+  const userId = usuario || "anonimo";
+
+  if (!memoria[userId]) {
+    memoria[userId] = [];
+  }
+
+  // salvar mensagem do usuário
+  memoria[userId].push({ tipo: "user", texto: mensagem });
 
   const texto = mensagem.toLowerCase();
-
   let resposta = "";
 
-  // FREE FIRE
-  if (texto.includes("free fire") || texto.includes("capa") || texto.includes("sensibilidade")) {
-    resposta = "Para dar capa no Free Fire, use sensibilidade geral entre 90 e 100, DPI alto e puxe a mira rapidamente para cima. Treine no modo treino para melhorar.";
+  // usar histórico (última mensagem)
+  const historico = memoria[userId].slice(-3).map(m => m.texto).join(" ");
+
+  // 📚 EBOOK
+  if (texto.includes("ebook")) {
+    resposta = escolher([
+      "Sim, ebook pode dar dinheiro! Você pode vender online e divulgar nas redes.",
+      "Se você criar um ebook bom, pode ganhar dinheiro sim.",
+      "O segredo é escolher um tema que as pessoas procuram."
+    ]);
   }
 
-  // DINHEIRO
-  else if (texto.includes("dinheiro") || texto.includes("ganhar dinheiro")) {
-    resposta = "Você pode ganhar dinheiro online vendendo produtos, editando vídeos, criando conteúdo ou usando apps como TikTok e Kwai. O importante é consistência.";
+  // 💰 DINHEIRO
+  else if (texto.includes("dinheiro") || texto.includes("ganhar")) {
+    resposta = escolher([
+      "Você pode ganhar dinheiro com internet, vendas ou conteúdo.",
+      "Escolha uma área e seja consistente.",
+      "Existem várias formas de ganhar dinheiro online."
+    ]);
   }
 
-  // FUTSAL
-  else if (texto.includes("futsal") || texto.includes("driblar") || texto.includes("futebol")) {
-    resposta = "Para driblar melhor no futsal, treine controle de bola, movimentos rápidos e jogue sem medo. A confiança faz muita diferença.";
+  // 🧠 MEMÓRIA USADA
+  else if (historico.includes("ebook") && texto.includes("como")) {
+    resposta = "Como você falou de ebook antes, você pode começar escrevendo um tema que conhece e depois vender online.";
   }
 
-  // MOTIVAÇÃO
-  else if (texto.includes("medo") || texto.includes("confiança")) {
-    resposta = "O medo é normal, mas você só melhora enfrentando. Comece simples e vá evoluindo. Confiança vem com treino.";
-  }
-
-  // RESPOSTA GERAL (INTELIGENTE)
+  // 🤖 GERAL COM MEMÓRIA
   else {
-    resposta = "Boa pergunta! Sobre isso, o melhor é estudar, praticar e nunca desistir. Se quiser, pergunte algo mais específico que posso te ajudar melhor.";
+    resposta = escolher([
+      `Sobre "${mensagem}", posso te ajudar melhor se você explicar mais.`,
+      `Você perguntou "${mensagem}". Isso depende, mas posso te ajudar.`,
+      `Interessante isso. Me fala mais detalhes.`,
+      `Com base no que você falou antes, tente continuar praticando e aprendendo.`
+    ]);
   }
+
+  // salvar resposta da IA
+  memoria[userId].push({ tipo: "bot", texto: resposta });
 
   res.json({ resposta });
 });
@@ -53,5 +82,5 @@ app.post("/chat", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Servidor rodando 🔥");
+  console.log("Servidor rodando com memória 🔥");
 });
