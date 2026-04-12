@@ -1,84 +1,57 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = require("node-fetch");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔑 COLOCA SUA CHAVE AQUI (COM ASPAS)
-const API_KEY = 
-process.env.OPENAI_API_KEY.replace(/\n/g, "");
-  
-
-// teste inicial (pra evitar erro status 1)
+// teste
 app.get("/", (req, res) => {
   res.send("AjudaPro online 🔥");
 });
 
-// banco simples
-let usuarios = [];
-
-// cadastro
-app.post("/register", (req, res) => {
-  const { email, senha } = req.body;
-
-  usuarios.push({
-    email,
-    senha,
-    criadoEm: Date.now(),
-    plano: "gratis"
-  });
-
-  res.json({ msg: "Conta criada com sucesso!" });
-});
-
-// login
-app.post("/login", (req, res) => {
-  const { email, senha } = req.body;
-
-  const user = usuarios.find(u => u.email === email && u.senha === senha);
-
-  if (!user) return res.json({ erro: "Usuário não encontrado" });
-
-  res.json(user);
-});
-
-// chat IA
+// IA simulada
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
-  try {
-    const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: mensagem }]
-      })
-    });
-
-    const data = await resposta.json();
-
-    if (data.error) {
-      return res.json({ erro: data.error.message });
-    }
-
-    res.json({
-      resposta: data.choices[0].message.content
-    });
-
-  } catch (err) {
-    res.json({ erro: err.message });
+  if (!mensagem) {
+    return res.json({ resposta: "Digite alguma pergunta." });
   }
+
+  const texto = mensagem.toLowerCase();
+
+  let resposta = "";
+
+  // FREE FIRE
+  if (texto.includes("free fire") || texto.includes("capa") || texto.includes("sensibilidade")) {
+    resposta = "Para dar capa no Free Fire, use sensibilidade geral entre 90 e 100, DPI alto e puxe a mira rapidamente para cima. Treine no modo treino para melhorar.";
+  }
+
+  // DINHEIRO
+  else if (texto.includes("dinheiro") || texto.includes("ganhar dinheiro")) {
+    resposta = "Você pode ganhar dinheiro online vendendo produtos, editando vídeos, criando conteúdo ou usando apps como TikTok e Kwai. O importante é consistência.";
+  }
+
+  // FUTSAL
+  else if (texto.includes("futsal") || texto.includes("driblar") || texto.includes("futebol")) {
+    resposta = "Para driblar melhor no futsal, treine controle de bola, movimentos rápidos e jogue sem medo. A confiança faz muita diferença.";
+  }
+
+  // MOTIVAÇÃO
+  else if (texto.includes("medo") || texto.includes("confiança")) {
+    resposta = "O medo é normal, mas você só melhora enfrentando. Comece simples e vá evoluindo. Confiança vem com treino.";
+  }
+
+  // RESPOSTA GERAL (INTELIGENTE)
+  else {
+    resposta = "Boa pergunta! Sobre isso, o melhor é estudar, praticar e nunca desistir. Se quiser, pergunte algo mais específico que posso te ajudar melhor.";
+  }
+
+  res.json({ resposta });
 });
 
-// porta render
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Servidor rodando");
+  console.log("Servidor rodando 🔥");
 });
