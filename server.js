@@ -7,8 +7,8 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 COLOCA SUA CHAVE AQUI (COM ASPAS)
-const API_KEY =
-process.env.OPENAI_API_KEY;
+const API_KEY = 
+process.env.OPENAI_API_KEY.replace(/\n/g, "");
   
 
 // teste inicial (pra evitar erro status 1)
